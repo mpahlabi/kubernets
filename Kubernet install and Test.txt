@@ -1,0 +1,163 @@
+## careate fok of orginal source code
+
+https://kubernetes.io/docs/tasks/tools/install-kubectl/#install-kubectl-on-linux
+https://kubernetes.io/docs/tasks/tools/install-minikube/
+
+sudo yum install kernel-devel kernel-headers make patch gcc
+
+cd /etc/yum.repos.d
+
+sudo wget https://download.virtualbox.org/virtualbox/rpm/el/virtualbox.repo -P /etc/yum.repos.d
+
+sudo yum install VirtualBox-5.2
+systemctl status vboxdrv
+
+minikube delete
+
+minikube start --vm-driver kvm2 [very importent never run minikube as a root user also virtualbox]
+
+
+### minicube like vagrant. It install in ubuntu host and start with help of Virtualbox resource.minicube runs a node claster.
+
+##Kubectl is now confgured minicube [GCR = Google container registry]
+
+##Simple Deployment create to check everthing working fine or not: 
+
+kubectl run hello-minikube --image=gcr.io/google_containers/echoserver:1.4 --port=8080
+
+##Check port:
+
+sudo netstat -tulpn |grep -i LISTEN
+
+##Expose deployment:
+
+kubectl expose deployment hello-minikube --type=NodePort
+
+##NodePort: it will assign for all service in one port in the node.
+
+##get deployment and service:
+
+kubectl get deployments
+
+kubectl get service
+
+##get service url:
+
+minikube service hello-minikube --url
+
+
+
+##vim tomcat.yml (ON yml file we will write code for deoployment and then services)
+
+kubectl create -f tomcat.yml -o json
+##To see the deployment:
+kubectl get deployments
+##To See what is inside the deployments:
+
+##(tomcat-deployment 3 images )
+##Pods = Pod runs inside the container.multiple replicas of same image.if 1 replica is down then other replicas will take care. if we delete on replica then immidiately it will up and running
+kubectl get describe pods_id
+
+##checks the pods with service url:
+
+minikube service tomcat-service --url
+
+##Delete replica of pods:
+
+kube delete pod pod_id
+
+kubectl delete services service_name
+
+kubectl delete deployments deployments_name
+
+kubectl create -f helloworld.yml
+
+kubectl get pods
+
+minikube service helloworld-service --url
+
+kubectl describe deployment tomcat-deployment
+
+kubectl create -f tomcat.yml -o json
+
+tomcat.yml
+============
+
+#oem@oem-Z97X-UD3H-BK:~$ sudo cat tomcat.yml
+
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: tomcat-deployment
+spec:
+  replicas: 3
+  selector:
+    matchLabels:
+      app: mytomcat
+  template:
+    metadata:
+      labels:
+        app: mytomcat
+    spec:
+      containers:
+      - name: tomcat-container
+        image: tomcat:9
+        ports:
+          - name: tomcat-port
+            containerPort: 8080
+        resources:
+          limits:
+            memory: 500Mi
+            cpu: 1
+          requests:
+            memory: 0.25Gi
+            cpu: 300m
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: tomcat-service
+spec:
+  ports:
+  - port: 31183
+    nodePort: 31183
+    protocol: TCP
+    targetPort: tomcat-port
+  selector:
+    app: mytomcat
+  type: NodePort
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
