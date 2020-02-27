@@ -56,7 +56,9 @@ kubectl get deployments
 
 ##(tomcat-deployment 3 images )
 ##Pods = Pod runs inside the container.multiple replicas of same image.if 1 replica is down then other replicas will take care. if we delete on replica then immidiately it will up and running
-kubectl get describe pods_id
+kubectl describe pod pods_id
+
+kubectl describe pod tomcat-deployment-55f58d5fdf-7qrx
 
 ##checks the pods with service url:
 
